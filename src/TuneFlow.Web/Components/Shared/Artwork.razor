@@ -1,0 +1,2 @@
+<div class="artwork art-@Track.Id @Class" style="--art:@Track.Color" aria-hidden="true"><div class="orbit"></div><span class="art-number">@(Track.LocalAudioKey is null ? Track.Id.ToString("00") : "♪")</span><span class="art-label">@(Track.LocalAudioKey is null ? "TUNEFLOW" : "PERSONAL")<br/>@(Track.LocalAudioKey is null ? "ORIGINALS" : "COLLECTION")</span></div>
+@code { [Parameter, EditorRequired] public Track Track {get;set;}=default!; [Parameter] public string Class {get;set;}=""; }

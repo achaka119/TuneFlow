@@ -1,0 +1,11 @@
+<div class="track-row @(CurrentId==Track.Id?"active":"")"><button class="track-start" aria-label="Play @Track.Title" @onclick="()=>OnPlay.InvokeAsync(Track)"><Artwork Track="Track" Class="tiny" /><span><strong>@Track.Title</strong><small>@Track.Artist</small></span></button><span class="genre">@Track.Genre</span><span class="duration">@($"{Track.Duration/60}:{Track.Duration%60:00}")</span><button class="icon @(Favorite?"liked":"")" aria-label="@(Favorite?"Unlike":"Like") @Track.Title" @onclick="()=>OnLike.InvokeAsync(Track.Id)">@(Favorite?"♥":"♡")</button>@if(Removable){<button class="icon" aria-label="Remove @Track.Title" @onclick="()=>OnRemove.InvokeAsync(Track.Id)">×</button>}else{<button class="icon" aria-label="Add @Track.Title to playlist" @onclick="()=>OnAdd.InvokeAsync(Track.Id)">+</button>}</div>
+@code {
+[Parameter,EditorRequired] public Track Track {get;set;}=default!;
+[Parameter] public int CurrentId {get;set;}
+[Parameter] public bool Favorite {get;set;}
+[Parameter] public bool Removable {get;set;}
+[Parameter] public EventCallback<Track> OnPlay {get;set;}
+[Parameter] public EventCallback<int> OnLike {get;set;}
+[Parameter] public EventCallback<int> OnAdd {get;set;}
+[Parameter] public EventCallback<int> OnRemove {get;set;}
+}

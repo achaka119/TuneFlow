@@ -1,0 +1,15 @@
+bin/
+obj/
+.vs/
+TestResults/
+node_modules/
+playwright-report/
+.DS_Store
+*.user
+*.suo
+*.log
+.env
+.env.*
+!.env.example
+*.app/
+artifacts/

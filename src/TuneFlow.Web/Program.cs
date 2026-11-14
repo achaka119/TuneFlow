@@ -1,0 +1,16 @@
+using TuneFlow.Core;
+using TuneFlow.Web.Components;
+Environment.SetEnvironmentVariable("DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE", "false");
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddRazorComponents().AddInteractiveServerComponents();
+builder.Services.AddScoped<LibraryState>();
+var app = builder.Build();
+app.UseExceptionHandler("/error");
+app.UseStaticFiles(new StaticFileOptions { OnPrepareResponse = c => { if(c.File.Name.EndsWith(".wav")) c.Context.Response.Headers.CacheControl="public,max-age=86400"; } });
+app.UseAntiforgery();
+app.MapGet("/health",()=>Results.Ok(new { status="ok" }));
+app.MapGet("/api/tracks",(string? q,string? genre)=>Catalog.Search(q,genre??"All"));
+app.MapGet("/api/mix",(string? mood)=>Catalog.Mix(mood??"Focus",Array.Empty<int>()));
+app.MapGet("/error",()=>Results.Problem("TuneFlow encountered an error. Reload the page to reconnect."));
+app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
+app.Run();
