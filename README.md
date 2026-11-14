@@ -3,7 +3,7 @@
 **Askar Kairatbek · IT-2501**
 **Tolbasy Aliakbar · IT-2501**
 
-An academic C# / ASP.NET Core Blazor application with a working audio player, a searchable original music catalog, favorites, playlists, history and an explainable mood mix. The interface and defense materials are in English.
+An academic C# / ASP.NET Core Blazor application with a working audio player, a searchable original music catalog, favorites, playlists, history and an explainable mood mix.
 
 ## Run
 
@@ -40,7 +40,6 @@ The domain suite is a dependency-free executable test runner with a nonzero exit
 - src/TuneFlow.Core: domain records, pure LINQ catalog functions and validated library state.
 - src/TuneFlow.Web: host, APIs, Razor components, CSS and a small HTML audio bridge.
 - tests: domain, HTTP and optional end-to-end suites.
-- docs: architecture, rubric mapping, QA results, screenshots and English defense script.
 
 ## Scope and limitations
 
@@ -54,13 +53,8 @@ See docs/QA.md for what was actually verified and what remains unverified.
 
 Search → Upload song → enter Song title and Artist → Choose File → Import song. Supported extensions: MP3, WAV, M4A and OGG. The browser must support the codec. Limit: 20 MB per file and 50 imported songs. Invalid, empty, oversized and unplayable files show an error. The duration is read from audio metadata.
 
-Imported files stay in IndexedDB in the current browser and origin. Only metadata, favorites and playlists use localStorage. Audio bytes do not pass through the .NET server. Imported songs participate in search, favorites, playlists, history and the mix. The read-only HTTP catalog API intentionally continues to expose only public demo tracks. Files do not sync to another browser, hostname or port. Clearing site data, private browsing or storage eviction can remove them; keep the original files. No DRM-protected service downloads are supported.
+## Downloads
 
-## Downloads and defense materials
-
-- [Mac application ZIP](downloads/TuneFlow-Mac.zip): Apple Silicon, macOS 13+, installed .NET 8 runtime required. Extract, then double-click TuneFlow-Mac.app. The launcher starts the server and opens the browser without Terminal.
+- [Mac application ZIP](downloads/TuneFlow-Mac.zip): Apple Silicon, macOS 13+, installed .NET 8 runtime required. Extract, then double-click TuneFlow-Mac.app.
 - [English presentation](docs/TuneFlow-Presentation.pptx).
-- [Defense script](docs/DEFENSE.md).
-- [Assessment criteria mapping](docs/CRITERIA.md).
 
-Build the Mac application from source with `sh tools/macos/build.sh` on an Apple Silicon Mac with the .NET 8 SDK and Apple command-line development tools. Generated output is placed in `artifacts/` and is not committed.
