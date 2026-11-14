@@ -1,6 +1,7 @@
 # TuneFlow — A Music Streaming Application
 
 **Askar Kairatbek · IT-2501**
+**Tolbasy Aliakbar · IT-2501**
 
 An academic C# / ASP.NET Core Blazor application with a working audio player, a searchable original music catalog, favorites, playlists, history and an explainable mood mix. The interface and defense materials are in English.
 
