@@ -8,7 +8,7 @@ Date: 13 November 2026. Host: macOS arm64, .NET SDK 8.0.425.
 - 19 dependency-free domain tests passed. Search and genre intersection, deterministic mix, favorite rules, playlist CRUD and validation, JSON roundtrip, sanitization, state isolation and count limits are covered.
 - 12 HTTP checks passed: health/catalog/mix behavior and range/cache checks for all six audio files. Every range response used status 206 and returned exactly 100 requested bytes.
 - Browser workflow observed using the in-app browser: initial render, playback state changing to Pause, elapsed-time progress, pause, case-insensitive search, favorite toggle, playlist creation, adding a track and persistence after reload.
-- Final desktop layout inspected at 1440 × 1080, and mobile layout at 390 × 844. Screenshots are included.
+- Final desktop layout inspected at 1440 × 1080, and mobile layout at 390 × 844.
 
 ## Supplied but not run in this environment
 

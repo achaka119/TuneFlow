@@ -56,5 +56,4 @@ Search → Upload song → enter Song title and Artist → Choose File → Impor
 ## Downloads
 
 - [Mac application ZIP](downloads/TuneFlow-Mac.zip): Apple Silicon, macOS 13+, installed .NET 8 runtime required. Extract, then double-click TuneFlow-Mac.app.
-- [English presentation](docs/TuneFlow-Presentation.pptx).
 
