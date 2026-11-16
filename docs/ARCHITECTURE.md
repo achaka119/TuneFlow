@@ -6,7 +6,7 @@
 flowchart LR
  Browser[Browser / Razor UI] --> Circuit[Blazor Interactive Server circuit]
  Circuit --> State[Scoped LibraryState]
- Circuit --> Catalog[Catalog pure queries]
+ Circuit --> Catalog[Catalog manual algorithms]
  State --> Domain[Track / Playlist / Snapshot records]
  Browser --> Audio[Static WAV HTTP byte ranges]
  Circuit --> JS[JS interop]
@@ -15,7 +15,7 @@ flowchart LR
 
 Core references no web framework. Web depends on Core. ASP.NET Core dependency injection creates a LibraryState per circuit, avoiding shared personal state across visitors. Home coordinates events, so this is a component/state-container architecture rather than an asserted full MVVM implementation. Parameters and EventCallbacks decouple TrackRow from Home. Artwork consumes one Track parameter.
 
-Catalog.Search and Catalog.Mix are pure queries using LINQ. Track is an immutable record. LibraryState deliberately owns mutable collections but exposes defensive copies. Snapshot restore validates version before mutation, caps playlists, deduplicates names and track references, and filters unknown IDs. Browser JSON is untrusted and may be edited by the user. It is never used for authentication or authorization.
+Catalog.Search and Catalog.Mix are pure queries implemented with explicit loops. Mix uses a handwritten insertion sort, ordering score descending and track ID ascending. Track is an immutable record. LibraryState deliberately owns mutable collections but exposes defensive copies. Snapshot restore validates version before mutation, caps playlists, deduplicates names and track references, and filters unknown IDs. Browser JSON is untrusted and may be edited by the user. It is never used for authentication or authorization.
 
 The original WAV assets are immutable. ASP.NET Core StaticFileMiddleware supplies range responses and caches them for 24 hours. HTMLAudioElement handles decoding, seeking, buffering and volume. The bridge reports progress at most once per 750 ms. The .NET reference and audio resource are disposed when the component is disposed. There is one audio element per app instance.
 
@@ -32,7 +32,7 @@ The UI uses the injected domain services directly rather than making redundant H
 
 ## Persistence
 
-localStorage key: tuneflow.library.v1. JSON schema is represented by LibrarySnapshot: Version, Favorites, Playlists and History. Local storage is origin-specific. Storage failures show a notification and leave session state usable. Corrupt JSON is caught, and the user can continue with a fresh session. No migrations beyond schema version 1 are implemented. State is not synchronized between open tabs.
+localStorage key: tuneflow.library.v1. JSON schema is represented by LibrarySnapshot: Version, Favorites, Playlists and History. Local storage is origin-specific. Storage failures show a notification and leave session state usable. Corrupt JSON is caught, and the user can continue with a fresh session. The schema remains version 1, so existing saved libraries are readable after the refactor. State is not synchronized between open tabs.
 
 ## Extending and deploying
 
@@ -49,3 +49,15 @@ These sources support the technology discussion. Project behavior is supported b
 ## Personal audio import
 
 UploadPanel is a reusable C# Razor component. C# validates title and artist and registers a validated Track with a local audio key. A browser file input passes its selected File directly to the JavaScript adapter, which checks the extension and 20 MB limit, verifies playable audio metadata with a timeout, and writes the File to IndexedDB. No audio upload endpoint is exposed. LibrarySnapshot includes optional Uploads metadata, retaining compatibility with the original schema. LibraryState restores valid uploaded records before validating favorite and playlist references. HTML audio plays an object URL created from IndexedDB and revokes the URL when switching songs or disposing. Imported tracks are private to the browser origin and do not appear in the public demo API.
+
+## Manual C# implementation
+
+The former Library.cs has been split into Models/Track.cs, Models/Playlist.cs, Models/LibrarySnapshot.cs, Catalog.cs, LibraryState.cs and Result.cs. There are no third-party NuGet references. Standard List, HashSet and JSON support remain framework facilities. System.Linq implicit imports are removed from Core and Web, and no LINQ calls occur in their authored C# or Razor code.
+
+Catalog.Search visits every source song and checks its genre and search text. Catalog.Mix copies the source and uses insertion sort with a deterministic comparator. Score is a pure function. FindTrackIndex performs a linear queue lookup. These algorithms are suitable for the six bundled songs and a maximum of fifty imported songs; they are not a claim about large-catalog throughput.
+
+LibraryState scans collections for track and playlist lookup, explicitly builds defensive copies, removes duplicates during restore and sorts favorite IDs with insertion sort for stable snapshots. Restore builds temporary sanitized collections before replacing current state.
+
+Result<T> is a handwritten generic class. Map transforms a successful value, Bind composes a validation step, and both propagate an existing failure without invoking the next delegate. TryCreate and TryRename return Result<Playlist>; Home displays their errors instead of relying on exceptions for normal input validation. CheckUploadText composes title and artist validation with Bind and Map. The original Create/Rename/ValidateUploadText wrappers remain compatible with existing callers.
+
+UI handlers live in partial code-behind classes. Razor components continue using parameters and EventCallbacks. The browser bridge and version-1 storage keys are unchanged.

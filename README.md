@@ -20,6 +20,7 @@ Open http://localhost:5080. No database, API keys, Node.js or external NuGet pac
 ```sh
 dotnet build TuneFlow.sln --disable-build-servers -m:1 -p:UseSharedCompilation=false
 dotnet run --project tests/TuneFlow.Tests --disable-build-servers
+dotnet run --project tests/TuneFlow.RenderChecks --disable-build-servers
 python3 tests/http_checks.py http://localhost:5080
 ```
 
@@ -37,7 +38,7 @@ The domain suite is a dependency-free executable test runner with a nonzero exit
 
 ## Project map
 
-- src/TuneFlow.Core: domain records, pure LINQ catalog functions and validated library state.
+- src/TuneFlow.Core: domain records, handwritten catalog algorithms, Result<T> and validated application state.
 - src/TuneFlow.Web: host, APIs, Razor components, CSS and a small HTML audio bridge.
 - tests: domain, HTTP and optional end-to-end suites.
 
@@ -57,3 +58,11 @@ Search → Upload song → enter Song title and Artist → Choose File → Impor
 
 - [Mac application ZIP](downloads/TuneFlow-Mac.zip): Apple Silicon, macOS 13+, installed .NET 8 runtime required. Extract, then double-click TuneFlow-Mac.app.
 
+
+## C# implementation
+
+`Library.cs` has been removed. Each model now has its own file in `src/TuneFlow.Core/Models`. `Catalog.cs` implements filtering with foreach and ranking with insertion sort. `LibraryState.cs` implements song and playlist lookup, duplicate handling, history, defensive copying and snapshot restoration with explicit loops. `Result.cs` contains our own generic success/failure type, including Map and Bind. Forms use it to show validation errors.
+
+The application code does not use LINQ. Its implicit System.Linq import is disabled in both application projects. Standard .NET collections, JSON serialization and the ASP.NET Core/Blazor framework remain in use. The tests intentionally use LINQ as an independent reference to compare the handwritten algorithms.
+
+C# event handlers are in `Home.razor.cs` and `UploadPanel.razor.cs`; their corresponding `.razor` files contain markup. Existing version-1 browser snapshots remain compatible. Playlist display and playback follow the same track-addition order.

@@ -21,3 +21,11 @@ Independent Windows/Linux runs, Safari/Firefox, physical Android/iOS, keyboard-o
 ## Personal audio import update
 
 25 domain tests passed after adding six import-related tests. Web build passed without warnings or errors. Browser verification: import an existing original WAV through the file chooser, play it, like it, reload, and play the restored IndexedDB audio successfully. Earlier 19-test results describe the initial version.
+
+## Manual C# refactor on 16 November 2026
+
+- Solution builds without warnings or errors after replacing Library.cs with separate model, catalog, state and Result files.
+- All 50 domain checks pass, including the original 25 regression checks and 25 additional checks for handwritten search, insertion sort, Result composition, defensive copying and snapshot compatibility. The sort is compared with an independent reference across 100 randomized source orderings; search is compared across 48 query/genre combinations.
+- Three server-side component render checks pass: Home/code-behind integration, mood-ranking output and UploadPanel controls. These are static render checks, not browser end-to-end tests.
+- All 12 HTTP checks pass for health, catalog/mix behavior and six audio range/cache responses.
+- Standalone Chrome automation could not start under the environment restrictions. A fresh interactive browser run is therefore not reported as passed for this refactor.

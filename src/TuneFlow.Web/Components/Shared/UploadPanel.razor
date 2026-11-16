@@ -9,22 +9,3 @@
  <button class="primary" disabled="@busy" @onclick="Import">@(busy?"Importing…":"Import song")</button>
  <button class="secondary" disabled="@busy" @onclick="()=>OnClose.InvokeAsync()">Cancel</button>
 </section>
-@code {
- [Parameter] public EventCallback<Track> OnUploaded {get;set;}
- [Parameter] public EventCallback OnClose {get;set;}
- readonly string inputId="upload-"+Guid.NewGuid().ToString("N");
- string title="",artist="";string? error;bool busy;
- async Task Import(){
- if(busy)return;error=null;
- try{
- LibraryState.ValidateUploadText(title,artist);
- if(Library.Tracks.Count(t=>t.LocalAudioKey!=null)>=50)throw new ArgumentException("You can import up to 50 songs.");
- busy=true;var key=Guid.NewGuid().ToString("N");
- var duration=await JS.InvokeAsync<double>("tune.importTrack",inputId,key);
- var track=new Track(Library.NextUploadId,title.Trim(),artist.Trim(),"Uploads","Personal",0,"#b6a0ff",(int)Math.Ceiling(duration),key);
- try{await OnUploaded.InvokeAsync(track);}catch{await JS.InvokeVoidAsync("tune.removeImport",key);throw;}
- }catch(ArgumentException e){error=e.Message;}
- catch(JSException e){error=e.Message.Split('\n')[0].Replace("Error: ","");}
- finally{busy=false;}
- }
-}
